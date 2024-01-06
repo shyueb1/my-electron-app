@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div>
+        <button onclick="electron.send('start')">Start</button>
+        <button onclick="electron.send('stop')">Stop</button>
+        <button onclick="electron.send('reset')">Reset</button>
+    </div>
+    <div>
+        <input id="startAt" onkeydown="handleKeyDown(event)"></input>
+    </div>
+    <script>
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                element = document.getElementById('startAt')
+                electron.send('startAt', element.value);
+                element.value = '';
+            }
+        }
+    </script>
+</body>
+</html>

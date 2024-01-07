@@ -106,6 +106,8 @@ app.on('ready', () => {
     }
     });
 
+    app.dock.hide();
+
     let interval = null;
 
     ipcMain.on('start', () => {

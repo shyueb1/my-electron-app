@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <!-- HTML5 audio player with an example sound file -->
+  <audio id="audioPlayer" preload="auto">
+    <source src="finish.mp3" type="audio/mp3">
+  </audio>
+
+  <script>
+    const audioPlayer = document.getElementById('audioPlayer');
+
+    // Listen for IPC message to play the sound
+    require('electron').ipcRenderer.on('playSound', () => {
+      audioPlayer.play();
+    });
+  </script>
+</body>
+</html>

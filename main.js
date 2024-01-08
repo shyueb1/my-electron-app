@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Tray, contextBridge, ipcMain} = require('electron');
+const { app, BrowserWindow, Tray, contextBridge, ipcMain, ipcRenderer} = require('electron');
 const path = require('path');
 
 let smallWindow;
@@ -20,6 +20,9 @@ class Timer {
         if (this.countdown) {
             this.interval = setInterval(() => {
                 this.time--;
+                if (this.time === 0) {
+                    this.stop();                    
+                }
             }, 1000);
         } else {
             this.interval = setInterval(() => {
@@ -106,6 +109,16 @@ app.on('ready', () => {
     }
     });
 
+    hiddenWindow = new BrowserWindow({
+        width: 400,
+        height: 200,
+        show: false,
+        webPreferences: {
+          nodeIntegration: true, // Enable Node.js integration
+          contextIsolation: false, // Disable context isolation for this example
+        },
+      });
+
     app.dock.hide();
 
     let interval = null;
@@ -136,9 +149,21 @@ app.on('ready', () => {
         }
         interval = setInterval(() => {
             tray.setTitle(timer.getTimeString());
+            if (timer.getTime() <= 0) {
+                timer.reset();
+                hiddenWindow.webContents.send('playSound');
+                clearInterval(interval);
+            }
         }, 1000);
     });
-
+    
+      // Load HTML5 audio player in the hidden window
+      hiddenWindow.loadFile(path.join(__dirname, 'hiddenWindowSound.html'));
+    
+      // Event handler for IPC message to play a sound
+      ipcMain.on('playSound', () => {
+        hiddenWindow.webContents.send('playSound');
+      });
 });
 
 function toggleWindow() {

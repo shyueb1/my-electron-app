@@ -87,10 +87,8 @@ app.on('ready', () => {
 
     // Define the small window
     const windowConfig = {
-    width: 165,
+    width: 210,
     height: 60,
-    // width: 1000,
-    // height: 1000,
     show: false,
     frame: false,
     resizable: false,
@@ -131,15 +129,18 @@ app.on('ready', () => {
         interval = setInterval(() => {
             tray.setTitle(timer.getTimeString());
         }, 1000);
+        smallWindow.hide();
     });
 
     ipcMain.on('stop', () => {
         timer.stop();
+        smallWindow.hide();
     });
 
     ipcMain.on('reset', () => {
         timer.reset();
         tray.setTitle('00:00:00');
+        smallWindow.hide();
     });
 
     ipcMain.on('startAt', (event, time) => {
@@ -155,15 +156,20 @@ app.on('ready', () => {
                 clearInterval(interval);
             }
         }, 1000);
+        smallWindow.hide();
+    });
+
+    ipcMain.on('quit', () => {
+        app.quit();
     });
     
-      // Load HTML5 audio player in the hidden window
-      hiddenWindow.loadFile(path.join(__dirname, 'hiddenWindowSound.html'));
-    
-      // Event handler for IPC message to play a sound
-      ipcMain.on('playSound', () => {
-        hiddenWindow.webContents.send('playSound');
-      });
+    // Load HTML5 audio player in the hidden window
+    hiddenWindow.loadFile(path.join(__dirname, 'hiddenWindowSound.html'));
+  
+    // Event handler for IPC message to play a sound
+    ipcMain.on('playSound', () => {
+      hiddenWindow.webContents.send('playSound');
+    });
 });
 
 function toggleWindow() {
